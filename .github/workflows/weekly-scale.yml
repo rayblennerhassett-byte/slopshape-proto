@@ -50,3 +50,21 @@ jobs:
       - name: Check human-vs-AI direction vs previous run
         if: steps.previous.outputs.found == 'true'
         run: bun run experiment/drift.ts scale-output.txt prev-scale/scale-output.txt
+
+  probe-red-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      checks: read
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.11
+      - name: Prove red gates still block the merge
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: bun run experiment/probe-red-gates.ts

@@ -54,6 +54,7 @@ independent axis: the structural-rarity percentile (`rarity:` and
 | [humanize-cli.ts](humanize-cli.ts) | Run the humanizer: text on stdout, report on stderr |
 | [demo.ts](demo.ts) | The paper's headline findings, reproduced in miniature (exits non-zero on failure) |
 | [experiment/scale.ts](experiment/scale.ts) | The pool-scaling experiment: does more scale fix the thresholds? (see below) |
+| [experiment/probe-red-gates.ts](experiment/probe-red-gates.ts) | The weekly red-gates probe: proves branch protection still blocks red-CI PRs |
 | [samples/](samples/) | One AI-style and one human-style sample post |
 | [RESEARCH.md](RESEARCH.md) | Empirical research review (Oct 2026): academic, developer, enthusiast sources, critically reviewed |
 | [.agents/skills/detect-ai-content/SKILL.md](.agents/skills/detect-ai-content/SKILL.md) | Agent skill: the detector — surface the AI signature as evidence |
@@ -264,4 +265,10 @@ cross-pair table.
 A weekly cron (Mondays 06:00 UTC) re-runs the 3-pair scale
 experiment, uploads its output as a `scale-output-weekly`
 artifact, and fails if the human-vs-AI direction drifts from
-the previous week's run.
+the previous week's run. The same cron re-proves the protection
+itself ([experiment/probe-red-gates.ts](experiment/probe-red-gates.ts)):
+it opens a probe PR whose only change is a deliberately failing
+test, waits for `gates` to run red, attempts the merge, and
+fails the weekly run if GitHub accepts it — so red-CI-blocks-merge
+is verified every week instead of resting on the one-time #8
+evidence.
