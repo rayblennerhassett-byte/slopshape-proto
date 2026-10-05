@@ -106,7 +106,15 @@ async function expectOk(
 ): Promise<Response> {
   const response = await api(method, path, body);
   if (!response.ok) {
-    throw new Error(`${method} ${path} returned HTTP ${response.status}`);
+    // Surface the API's message: a bare status
+    // discards the reason, and distinct failures
+    // (permission denied vs abuse detection) can
+    // share a status code.
+    const detail = await response.text().catch(() => "");
+    throw new Error(
+      `${method} ${path} returned HTTP ${response.status}` +
+        (detail ? `: ${detail.slice(0, 200)}` : ""),
+    );
   }
   return response;
 }
