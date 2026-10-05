@@ -246,7 +246,8 @@ land through pull requests:
 
 The CI-must-pass requirement is enforced by branch
 protection and was verified with a deliberately failing
-probe PR (its red `gates` check blocked the merge).
+probe PR (#8, 2026-10-05): its red `gates` check kept
+the PR blocked until it was closed.
 
 CI can also be re-run on demand from the Actions tab
 (Actions → CI → Run workflow), with a `pair` input that runs
