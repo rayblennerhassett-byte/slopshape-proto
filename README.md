@@ -55,6 +55,7 @@ independent axis: the structural-rarity percentile (`rarity:` and
 | [demo.ts](demo.ts) | The paper's headline findings, reproduced in miniature (exits non-zero on failure) |
 | [experiment/scale.ts](experiment/scale.ts) | The pool-scaling experiment: does more scale fix the thresholds? (see below) |
 | [experiment/probe-red-gates.ts](experiment/probe-red-gates.ts) | The weekly red-gates probe: proves branch protection still blocks red-CI PRs |
+| [experiment/prune-artifacts.ts](experiment/prune-artifacts.ts) | The scheduled pruner: deletes per-run scale-output artifacts older than 30 days |
 | [samples/](samples/) | One AI-style and one human-style sample post |
 | [RESEARCH.md](RESEARCH.md) | Empirical research review (Oct 2026): academic, developer, enthusiast sources, critically reviewed |
 | [.agents/skills/detect-ai-content/SKILL.md](.agents/skills/detect-ai-content/SKILL.md) | Agent skill: the detector — surface the AI signature as evidence |
@@ -272,3 +273,10 @@ test, waits for `gates` to run red, attempts the merge, and
 fails the weekly run if GitHub accepts it — so red-CI-blocks-merge
 is verified every week instead of resting on the one-time #8
 evidence.
+
+A second cron (Mondays 06:30 UTC) prunes the per-run
+`scale-output` artifacts those runs leave behind
+([experiment/prune-artifacts.ts](experiment/prune-artifacts.ts)):
+anything older than 30 days is deleted, while the
+`scale-output-weekly` baselines the drift check compares
+against are kept.
