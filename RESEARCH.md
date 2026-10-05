@@ -149,6 +149,29 @@ domain-transfer replication of it, with a 16-row deviation register.
    the *direction* (human arm mean > AI arm mean, reproduced with
    margin in `bun run demo` panel 4) transfers — not the paper's
    absolute values (0.838 vs 0.435, d = 1.83).
+5. The scale question is settled empirically, not by assumption —
+   `experiment/scale.ts` (`bun run scale`) grows the pool under the
+   plan's own construction rule from 17 to 131 configurations
+   (single-feature → pairs → triples → quads → full 2^6−1 mutation
+   combinations). The plan's original sample-level thresholds (human
+   ≥ 0.7, AI ≤ 0.6) **never flip**: the human sample's percentile
+   moves 0.412 → 0.064 → 0.023 → 0.171 → 0.237, and the AI
+   threshold fails from quads on. Worse, the mechanism *inverts* with
+   vocabulary depth — human within-arm spread contracts 4.491 → 3.361
+   while the AI's grows 4.308 → 5.238, and from the pairs tier the AI
+   arm mean exceeds the human's (Cohen's d ends at −1.248). The shipped
+   17-config design is the only tier where the paper's direction and
+   mechanism hold. The probe that isolates the real variable: holding
+   the human arm at single-feature breadth but growing the AI arm to
+   the full combination space (74 configs, 10.8% human — the paper's
+   pooled corpus is ~15% human) makes **both thresholds pass** (human
+   0.959, AI 0.338) with arm means 0.953 vs 0.453 and d = 2.043,
+   close to the paper's 0.838 vs 0.435 and 1.83. Composition, not
+   size, is the binding constraint; a 50/50 synthetic balance is not
+   the paper's mechanism. The tests therefore assert *direction* with
+   a margin, not the literal thresholds — which were specified against
+   the wrong statistic (two sample percentiles, where the paper reports
+   arm means over 13,500 posts) and the wrong composition.
 
 **Contradictions worth naming.** "Detecting AI may be impossible" (TRAILS)
 vs "98.0 macro-F1" (SlopShape) vs "humanizers beat detectors" (enthusiast
@@ -208,3 +231,14 @@ formally gets falsely flagged at rates that make accusation unsafe.
   gap stated; `test/rarity.test.ts` covers the method (pooled
   composition, leave-self-out scoring, lexical invariance, direction
   with margin, the crowding mechanism, determinism, degenerate pools).
+- Split the default-corpus construction out of `src/rarity.ts` into
+  `src/pool.ts` (`buildDefaultPool`, `MUTATIONS`, `DefaultPool`):
+  rarity.ts is now the pure method, pool.ts the corpus builder, and
+  the split is behavior-preserving (all rarity values unchanged).
+- Added `experiment/scale.ts` (`bun run scale`): the pool-scaling
+  experiment described in §3.5 — deterministic, 131-configuration
+  combinatorial tiers plus the paper-ratio composition probe.
+- `demo.ts` now exits non-zero when any panel fails, so `bun run demo`
+  is a real CI gate, not just a printout.
+- Added `.github/workflows/ci.yml`: typecheck, test, demo, detect on
+  both samples, and the scale experiment, on bun 1.3.11 / ubuntu.

@@ -7,6 +7,7 @@
     "test": "bun test ./test",
     "demo": "bun run demo.ts",
     "detect": "bun run cli.ts",
+    "scale": "bun run experiment/scale.ts",
     "humanize": "bun run humanize-cli.ts",
     "typecheck": "tsc --noEmit"
   },

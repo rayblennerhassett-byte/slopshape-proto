@@ -30,6 +30,7 @@ bun run detect samples/ai-post.md          # detector CLI (alias of cli.ts)
 cat samples/human-post.md | bun run detect
 bun run detect --json samples/ai-post.md   # full feature + signal breakdown
 bun test                 # run the test suite
+bun run scale            # pool-scaling experiment (17 -> 131 configs)
 ```
 
 Output of `cli.ts` is a 0–1 score (`0 = maximally human-shaped`,
@@ -44,11 +45,13 @@ independent axis: the structural-rarity percentile (`rarity:` and
 | --- | --- |
 | [src/detector.ts](src/detector.ts) | Feature extraction + weighted scoring (`scoreText`) |
 | [src/rarity.ts](src/rarity.ts) | The second axis: structural-rarity percentile against a pooled reference corpus |
+| [src/pool.ts](src/pool.ts) | The default reference pool: deterministic two-sample, two-arm corpus construction |
 | [src/reword.ts](src/reword.ts) | Two rule-based rewording arms (see below) |
 | [src/humanize.ts](src/humanize.ts) | The Table 6 humanization playbook, executed |
 | [cli.ts](cli.ts) | Score a file or stdin, human-readable or `--json` |
 | [humanize-cli.ts](humanize-cli.ts) | Run the humanizer: text on stdout, report on stderr |
-| [demo.ts](demo.ts) | The paper's headline findings, reproduced in miniature |
+| [demo.ts](demo.ts) | The paper's headline findings, reproduced in miniature (exits non-zero on failure) |
+| [experiment/scale.ts](experiment/scale.ts) | The pool-scaling experiment: does more scale fix the thresholds? (see below) |
 | [samples/](samples/) | One AI-style and one human-style sample post |
 | [RESEARCH.md](RESEARCH.md) | Empirical research review (Oct 2026): academic, developer, enthusiast sources, critically reviewed |
 | [.agents/skills/detect-ai-content/SKILL.md](.agents/skills/detect-ai-content/SKILL.md) | Agent skill: the detector — surface the AI signature as evidence |
@@ -125,6 +128,21 @@ independent of the template score:
   sample — the centroid of its own arm — sits near 0.41, not the
   paper's 0.838. **The direction is the finding; exact values are
   illustrative.**
+- **More scale does not fix it — composition does.** The
+  [pool-scaling experiment](experiment/scale.ts) (`bun run scale`)
+  grows the pool under the same construction rule to 131
+  configurations (all 2^6−1 mutation combinations, in tiers): the
+  plan's original sample-level thresholds (human ≥ 0.7, AI ≤ 0.6)
+  never flip, and the mechanism *inverts* — human within-arm spread
+  contracts (4.49 → 3.36) while the AI's grows (4.31 → 5.24), so
+  from the pairs tier the AI arm mean exceeds the human's. But the
+  paper's ~85/15 arm balance (probe: 10.8% human) passes both
+  thresholds (0.959 / 0.338) with arm means 0.953 vs 0.453 and
+  d = 2.043, close to the paper's 0.838 / 0.435 and 1.83. The
+  binding constraint is pool composition, not size; the shipped
+  17-config design is the only symmetric tier where the paper's
+  direction and mechanism hold, so the tests assert direction with
+  a margin rather than the literal thresholds.
 
 `bun run detect` prints both axes, and `bun run demo` panel 4
 reproduces the direction (arm means with margin), the effect size,

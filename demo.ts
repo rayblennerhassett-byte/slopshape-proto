@@ -16,17 +16,15 @@ import { join } from "node:path";
 import { scoreText } from "./src/detector";
 import { humanizeWithReport } from "./src/humanize";
 import { rewordDeSignpost, rewordLexical } from "./src/reword";
-import {
-  buildDefaultPool,
-  memberRarity,
-  meanPairwiseDistance,
-} from "./src/rarity";
+import { buildDefaultPool } from "./src/pool";
+import { memberRarity, meanPairwiseDistance } from "./src/rarity";
 
 const dir = join(import.meta.dir, "samples");
 const ai = readFileSync(join(dir, "ai-post.md"), "utf8");
 const human = readFileSync(join(dir, "human-post.md"), "utf8");
 
 const r = (x: number): string => x.toFixed(3);
+let failures = 0;
 
 console.log("=== 1. Structural separation (paper §5.1, Table 3 analogue) ===");
 const aiScore = scoreText(ai);
@@ -36,8 +34,11 @@ console.log(`Human-style sample: score ${r(humanScore.score)}  (${humanScore.ver
 const sep = (aiScore.score + humanScore.score) / 2;
 const margin = Math.abs(aiScore.score - humanScore.score);
 console.log(`separation margin: ${r(margin)} around midpoint ${r(sep)}`);
+const separationPass =
+  margin >= 0.2 && aiScore.score > 0.55 && humanScore.score < 0.45;
+if (!separationPass) failures += 1;
 console.log(
-  margin >= 0.2 && aiScore.score > 0.55 && humanScore.score < 0.45
+  separationPass
     ? "PASS: samples land on opposite sides of the midpoint with a clear margin"
     : "FAIL: samples did not separate",
 );
@@ -63,6 +64,7 @@ console.log("LAMP-style surface rewording (lexicon, intensifiers, attribution):"
 row("original", aiScore.score, aiScore.features.lexicalTellsPer100, 0);
 row("reworded", lexScore.score, lexScore.features.lexicalTellsPer100, lex.edits.length);
 const lexDrift = Math.abs(lexScore.score - aiScore.score);
+if (lexDrift >= 0.1) failures += 1;
 console.log(
   lexDrift < 0.1
     ? `PASS: structural drift ${r(lexDrift)} < 0.1 — detection unchanged under rewording`
@@ -169,6 +171,7 @@ console.log(
 );
 const directionPass =
   humanMean > aiMean + 0.15 && humanSamplePct > aiSamplePct;
+if (!directionPass) failures += 1;
 console.log(
   directionPass
     ? `PASS: direction reproduced — human arm mean ${r(humanMean)} exceeds AI arm mean ` +
@@ -183,3 +186,8 @@ console.log(
     `of its own arm — its own diverse mutations out-rare it — so the paper's 0.838 arm mean ` +
     `is only reachable against the full 13,500-post pool. The direction is the finding.`,
 );
+
+if (failures > 0) {
+  console.error(`\n${failures} panel(s) failed`);
+  process.exit(1);
+}

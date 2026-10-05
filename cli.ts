@@ -14,12 +14,11 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { PAPER, scoreText, type ScoreResult } from "./src/detector";
+import { buildDefaultPool, type DefaultPool } from "./src/pool";
 import {
-  buildDefaultPool,
   buildReferencePool,
   rarityOf,
   twoAxisReading,
-  type DefaultPool,
   type RarityResult,
 } from "./src/rarity";
 

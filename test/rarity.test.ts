@@ -2,8 +2,8 @@ import { describe, expect, test } from "bun:test";
 import { extractFeatures, scoreText } from "../src/detector";
 import { humanize } from "../src/humanize";
 import { rewordDeSignpost, rewordLexical } from "../src/reword";
+import { buildDefaultPool } from "../src/pool";
 import {
-  buildDefaultPool,
   buildReferencePool,
   K_NEIGHBORS,
   memberRarity,

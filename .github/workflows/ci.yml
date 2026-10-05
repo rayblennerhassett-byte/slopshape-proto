@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.11
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+      - run: bun test ./test
+      - run: bun run demo
+      - run: bun run detect samples/human-post.md
+      - run: bun run detect samples/ai-post.md
+      - run: bun run scale
