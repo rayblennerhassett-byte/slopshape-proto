@@ -244,6 +244,10 @@ land through pull requests:
    pass before the PR can merge.
 4. Merge (squash; the history is conventional-commit style).
 
+The CI-must-pass requirement is enforced by branch
+protection and was verified with a deliberately failing
+probe PR (its red `gates` check blocked the merge).
+
 CI can also be re-run on demand from the Actions tab
 (Actions → CI → Run workflow), with a `pair` input that runs
 the scale experiment on a single sample pair. The scale
