@@ -1,0 +1,17 @@
+{
+  "name": "slopshape-proto",
+  "version": "0.1.0",
+  "description": "Prototype structural AI-content detector after Madler (2026) 'SlopShape', arXiv:2609.15369",
+  "type": "module",
+  "scripts": {
+    "test": "bun test ./test",
+    "demo": "bun run demo.ts",
+    "detect": "bun run cli.ts",
+    "humanize": "bun run humanize-cli.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "bun-types": "^1.3.0",
+    "typescript": "^5.6.0"
+  }
+}
