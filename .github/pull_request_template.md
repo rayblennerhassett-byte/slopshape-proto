@@ -13,7 +13,8 @@ until it was closed.
 
 - [ ] Changes are on a branch off `main`, up to date with it
 - [ ] CI is green: `typecheck`, `bun test ./test`, `demo`, both `detect`
-      checks, the scale experiment, and the doc-citation check
+      checks, the scale experiment, the doc-citation check, and the
+      PR-title lint
 - [ ] Squash-merge with a conventional-commit subject
 
 ## Notes

@@ -34,6 +34,11 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_TOKEN: ${{ github.token }}
         run: bun run experiment/verify-citations.ts
+      - name: Lint PR title (conventional commits)
+        if: github.event_name == 'pull_request'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: bun run lint-pr-title.ts
       - run: bun install --frozen-lockfile
       - run: bun run typecheck
       - run: bun test ./test
