@@ -184,8 +184,8 @@ domain-transfer replication of it, with a 16-row deviation register.
    (library) — the tests' 0.15 margin is widest on the shipped
    pair, so *direction*, not the margin, is the transferable
    claim. `bun run scale` (no argument) re-runs the whole
-   cross-pair comparison; `bun run scale <dir>` runs a single
-   pair. `bun test` pins the fixture profile contract for every
+   cross-pair comparison; `bun run scale <pair>` (name or
+   path) runs a single pair. `bun test` pins the fixture profile contract for every
    pair (AI sample hits the Table 6 template features, human
    sample the human-leaning profile, scores separate).
 
