@@ -250,3 +250,8 @@ the scale experiment on a single sample pair. The scale
 output is uploaded as a workflow artifact (`scale-output`,
 or `scale-output-<pair>`), so on-demand runs keep the
 cross-pair table.
+
+A weekly cron (Mondays 06:00 UTC) re-runs the 3-pair scale
+experiment, uploads its output as a `scale-output-weekly`
+artifact, and fails if the human-vs-AI direction drifts from
+the previous week's run.
