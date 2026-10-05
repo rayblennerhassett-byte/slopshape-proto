@@ -6,7 +6,10 @@
  *
  * Deletes every artifact whose name starts with `scale-output`
  * but is not the `scale-output-weekly` baseline, once its
- * created_at is older than 30 days. The weekly baselines are
+ * created_at is older than 30 days. Per-run uploads already
+ * self-expire after 7 days (retention-days in ci.yml), so
+ * this cron is the backstop for anything that predates the
+ * cap or slips past it. The weekly baselines are
  * the drift check's only comparison point, so they are never
  * touched; GitHub's own 90-day expiry reaps them if a weekly
  * run ever stops. Exits 1 if any delete fails, 2 on misuse.

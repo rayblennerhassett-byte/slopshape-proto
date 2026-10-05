@@ -59,3 +59,7 @@ jobs:
           name: scale-output${{ inputs.pair != '' && format('-{0}', inputs.pair) || '' }}
           path: scale-output.txt
           if-no-files-found: error
+          # Per-run copies are for human inspection only; the drift
+          # check reads scale-output-weekly, so let GitHub expire them
+          # server-side instead of waiting for the 30-day pruner.
+          retention-days: 7
