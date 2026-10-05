@@ -240,9 +240,14 @@ land through pull requests:
 1. Branch off `main` (`git checkout -b <topic>`).
 2. Push the branch and open a PR.
 3. CI runs the full gates — typecheck, tests, demo, both
-   `detect` checks, the 3-pair scale experiment, and the
-   doc-citation check — and must pass before the PR can merge.
-4. Merge (squash; the history is conventional-commit style).
+   `detect` checks, the 3-pair scale experiment, the
+   doc-citation check, and the PR-title lint — and must
+   pass before the PR can merge.
+4. Merge (squash). The PR title becomes the commit message,
+   so it must be a conventional-commit subject —
+   `<type>[(scope)][!]: <description>` with type one of
+   build, chore, ci, docs, feat, fix, perf, probe, refactor,
+   style, or test (CI lints the title).
 
 The CI-must-pass requirement is enforced by branch
 protection and was verified with a deliberately failing

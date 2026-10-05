@@ -10,5 +10,5 @@
     "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true
   },
-  "include": ["src/**/*.ts", "demo.ts", "cli.ts", "humanize-cli.ts", "experiment/**/*.ts", "test/**/*.ts"]
+  "include": ["src/**/*.ts", "demo.ts", "cli.ts", "humanize-cli.ts", "lint-pr-title.ts", "experiment/**/*.ts", "test/**/*.ts"]
 }
