@@ -1,5 +1,7 @@
 # slopshape-proto
 
+![CI](https://github.com/rayblennerhassett-byte/slopshape-proto/actions/workflows/ci.yml/badge.svg?branch=main)
+
 A miniature, self-contained detector that prototypes the core idea of
 **SlopShape: Identifying AI-Generated Commercial Web Content**
 (Jochen Madler, Sitefire; [arXiv:2609.15369](https://arxiv.org/abs/2609.15369)):
