@@ -27,28 +27,28 @@ jobs:
           path: scale-output.txt
           if-no-files-found: error
       - id: previous
-        name: Fetch previous run's scale output
+        name: Find previous weekly run
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          PREV_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts?name=scale-output-weekly&per_page=100" \
-            --jq "[.artifacts[] | select(.workflow_run.id != ${GITHUB_RUN_ID})] | sort_by(.created_at) | reverse | .[0].id // empty")
-          if [ -z "$PREV_ID" ]; then
+          PREV_RUN_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts?name=scale-output-weekly&per_page=100" \
+            --jq "[.artifacts[] | select(.workflow_run.id != ${GITHUB_RUN_ID})] | sort_by(.created_at) | reverse | .[0].workflow_run.id // empty")
+          if [ -z "$PREV_RUN_ID" ]; then
             echo "No previous weekly artifact — first run establishes the baseline."
-            echo "found=false" >> "$GITHUB_OUTPUT"
           else
-            URL=$(gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${PREV_ID}" --jq '.archive_download_url')
-            curl -sSL \
-              -H "Authorization: Bearer ${GH_TOKEN}" \
-              -H "Accept: application/vnd.github+json" \
-              "$URL" -o prev-scale.zip
-            unzip -q prev-scale.zip -d prev-scale
-            echo "Fetched previous weekly artifact ${PREV_ID}."
-            echo "found=true" >> "$GITHUB_OUTPUT"
+            echo "Found previous weekly run ${PREV_RUN_ID}."
           fi
+          echo "run-id=${PREV_RUN_ID}" >> "$GITHUB_OUTPUT"
+      - name: Download previous weekly scale output
+        if: steps.previous.outputs.run-id != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: scale-output-weekly
+          run-id: ${{ steps.previous.outputs.run-id }}
+          path: prev-scale
       - name: Check human-vs-AI direction vs previous run
-        if: steps.previous.outputs.found == 'true'
+        if: steps.previous.outputs.run-id != ''
         run: bun run experiment/drift.ts scale-output.txt prev-scale/scale-output.txt
 
   probe-red-gates:
