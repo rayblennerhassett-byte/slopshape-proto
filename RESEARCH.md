@@ -172,6 +172,22 @@ domain-transfer replication of it, with a 16-row deviation register.
    a margin, not the literal thresholds — which were specified against
    the wrong statistic (two sample percentiles, where the paper reports
    arm means over 13,500 posts) and the wrong composition.
+6. The composition finding was validated on two further independent
+   sample pairs (`samples/bakery/`, `samples/library/` — different
+   domains and voices, no shared material with the shipped pair).
+   At the paper's arm balance the probe passes **both** thresholds on
+   all three pairs (human sample percentile 0.959 / 0.932 / 0.932,
+   AI 0.338 / 0.365 / 0.365, Cohen's d = 2.043 throughout), and
+   the mechanism inversion holds on all three. The single-feature
+   tier's direction also holds on all three, but its margin is
+   pair-dependent: 0.222 (shipped), 0.153 (bakery), 0.111
+   (library) — the tests' 0.15 margin is widest on the shipped
+   pair, so *direction*, not the margin, is the transferable
+   claim. `bun run scale` (no argument) re-runs the whole
+   cross-pair comparison; `bun run scale <dir>` runs a single
+   pair. `bun test` pins the fixture profile contract for every
+   pair (AI sample hits the Table 6 template features, human
+   sample the human-leaning profile, scores separate).
 
 **Contradictions worth naming.** "Detecting AI may be impossible" (TRAILS)
 vs "98.0 macro-F1" (SlopShape) vs "humanizers beat detectors" (enthusiast
@@ -237,7 +253,14 @@ formally gets falsely flagged at rates that make accusation unsafe.
   the split is behavior-preserving (all rarity values unchanged).
 - Added `experiment/scale.ts` (`bun run scale`): the pool-scaling
   experiment described in §3.5 — deterministic, 131-configuration
-  combinatorial tiers plus the paper-ratio composition probe.
+  combinatorial tiers plus the paper-ratio composition probe;
+  runs on the shipped pair and every `samples/<dir>/` pair and
+  reports a cross-pair validation table (§3.6).
+- Added two independent validation sample pairs, `samples/bakery/`
+  and `samples/library/`, and `test/samples.test.ts`, which pins
+  the fixture profile contract for every pair (AI sample hits the
+  Table 6 template features, human sample the human-leaning
+  profile, scores separate).
 - `demo.ts` now exits non-zero when any panel fails, so `bun run demo`
   is a real CI gate, not just a printout.
 - Added `.github/workflows/ci.yml`: typecheck, test, demo, detect on

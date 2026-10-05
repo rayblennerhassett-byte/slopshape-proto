@@ -142,7 +142,13 @@ independent of the template score:
   binding constraint is pool composition, not size; the shipped
   17-config design is the only symmetric tier where the paper's
   direction and mechanism hold, so the tests assert direction with
-  a margin rather than the literal thresholds.
+  a margin rather than the literal thresholds. Validated on two
+  further independent sample pairs (`samples/bakery/`,
+  `samples/library/`): the composition result and the mechanism
+  inversion hold on all three pairs, and the single-feature
+  direction holds on all three with a pair-dependent margin
+  (0.222 / 0.153 / 0.111) — direction, not the margin, is the
+  transferable claim.
 
 `bun run detect` prints both axes, and `bun run demo` panel 4
 reproduces the direction (arm means with margin), the effect size,
@@ -218,5 +224,7 @@ under lexical rewording while the lexical-tell channel collapses;
 de-signposting strips exactly the right features; claims survive the attacks;
 the rarity axis (pooled composition, direction reproduction, the crowding
 mechanism, leave-self-out scoring, lexical invariance, determinism, and
-degenerate-pool safety); and edge cases (empty input, unicode, huge single
-line).
+degenerate-pool safety); every `samples/` pair satisfies the fixture
+profile (AI sample hits the Table 6 template features, human sample the
+human-leaning profile, scores separate); and edge cases (empty input,
+unicode, huge single line).
