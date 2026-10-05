@@ -246,4 +246,7 @@ land through pull requests:
 
 CI can also be re-run on demand from the Actions tab
 (Actions → CI → Run workflow), with a `pair` input that runs
-the scale experiment on a single sample pair.
+the scale experiment on a single sample pair. The scale
+output is uploaded as a workflow artifact (`scale-output`,
+or `scale-output-<pair>`), so on-demand runs keep the
+cross-pair table.

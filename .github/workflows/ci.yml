@@ -34,7 +34,13 @@ jobs:
         run: |
           pair="${{ inputs.pair }}"
           if [ -z "$pair" ] || [ "$pair" = "all" ]; then
-            bun run scale
+            bun run scale 2>&1 | tee scale-output.txt
           else
-            bun run scale "$pair"
+            bun run scale "$pair" 2>&1 | tee scale-output.txt
           fi
+      - name: Upload scale experiment output
+        uses: actions/upload-artifact@v4
+        with:
+          name: scale-output${{ inputs.pair != '' && format('-{0}', inputs.pair) || '' }}
+          path: scale-output.txt
+          if-no-files-found: error
