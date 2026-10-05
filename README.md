@@ -240,8 +240,8 @@ land through pull requests:
 1. Branch off `main` (`git checkout -b <topic>`).
 2. Push the branch and open a PR.
 3. CI runs the full gates — typecheck, tests, demo, both
-   `detect` checks, and the 3-pair scale experiment — and must
-   pass before the PR can merge.
+   `detect` checks, the 3-pair scale experiment, and the
+   doc-citation check — and must pass before the PR can merge.
 4. Merge (squash; the history is conventional-commit style).
 
 The CI-must-pass requirement is enforced by branch
