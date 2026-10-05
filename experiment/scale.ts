@@ -27,9 +27,10 @@
  * table — does the composition finding (probe passes both
  * thresholds, mechanism inverts at combinatorial depth, the
  * single-feature tier reproduces the paper's direction) hold
- * beyond the shipped pair? Pass a directory to run one pair.
+ * beyond the shipped pair? Pass a pair name or directory to
+ * run one pair.
  *
- * Run: bun run scale [samplesDir]
+ * Run: bun run scale [pairName|dir]
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { basename, join, resolve } from "node:path";
@@ -63,10 +64,16 @@ function loadPair(name: string, dir: string): PairSpec {
 
 /**
  * The shipped pair plus every samples/<dir>/ pair on disk — or one
- * pair when a directory is passed on the command line.
+ * pair when a pair name (or explicit directory) is passed on the
+ * command line.
  */
 function discoverPairs(arg?: string): PairSpec[] {
-  if (arg) return [loadPair(basename(resolve(arg)), resolve(arg))];
+  if (arg) {
+    // Accept a pair name under samples/ or an explicit path.
+    const named = join(SAMPLES_ROOT, arg);
+    const dir = existsSync(named) ? named : resolve(arg);
+    return [loadPair(basename(dir), dir)];
+  }
   const hasBoth = (d: string) =>
     existsSync(join(d, "human-post.md")) && existsSync(join(d, "ai-post.md"));
   const pairs: PairSpec[] = [];
@@ -460,15 +467,22 @@ if (failed.length === 0) {
       `that reproduces the paper's direction.`,
   );
   if (marginShortfalls.length > 0) {
-    console.log(
-      `  Caveat: the single-feature direction margin is pair-dependent ` +
-        `(${marginShortfalls
-          .map((v) => `${v.name} ${f3(v.shippedMargin)}`)
-          .join(", ")} below the tests' 0.15; shipped pair ` +
-        `${f3(verdicts[0].shippedMargin)}). The direction holds on every ` +
+    const shortfalls = marginShortfalls
+      .map((v) => `${v.name} ${f3(v.shippedMargin)}`)
+      .join(", ");
+    const shipped = verdicts.find((v) => v.name === "shipped");
+    const detail = shipped
+      ? ` below the tests' 0.15; shipped pair ${f3(shipped.shippedMargin)}). The direction holds on every ` +
         `pair, but the margin the tests assert is widest on the shipped ` +
         `pair — a third pair could plausibly fall below it while still ` +
-        `pointing the right way.`,
+        `pointing the right way.`
+      : ` below the tests' 0.15). The direction holds on every pair in ` +
+        `this run, but the margin is pair-dependent — a pair outside ` +
+        `this run could plausibly fall below the tests' 0.15 while ` +
+        `still pointing the right way.`;
+    console.log(
+      `  Caveat: the single-feature direction margin is pair-dependent ` +
+        `(${shortfalls}${detail}`,
     );
   }
   console.log(
