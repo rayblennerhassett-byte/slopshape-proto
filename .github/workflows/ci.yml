@@ -3,6 +3,18 @@ name: CI
 on:
   push:
   pull_request:
+  workflow_dispatch:
+    inputs:
+      pair:
+        description: Sample pair to run the scale experiment over
+        type: choice
+        default: all
+        required: true
+        options:
+          - all
+          - shipped
+          - bakery
+          - library
 
 jobs:
   gates:
@@ -18,4 +30,11 @@ jobs:
       - run: bun run demo
       - run: bun run detect samples/human-post.md
       - run: bun run detect samples/ai-post.md
-      - run: bun run scale
+      - name: Run scale experiment
+        run: |
+          pair="${{ inputs.pair }}"
+          if [ -z "$pair" ] || [ "$pair" = "all" ]; then
+            bun run scale
+          else
+            bun run scale "$pair"
+          fi
