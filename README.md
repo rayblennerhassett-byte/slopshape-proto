@@ -261,7 +261,8 @@ CI can also be re-run on demand from the Actions tab
 the scale experiment on a single sample pair. The scale
 output is uploaded as a workflow artifact (`scale-output`,
 or `scale-output-<pair>`), so on-demand runs keep the
-cross-pair table.
+cross-pair table. Per-run artifacts carry a 7-day
+`retention-days` cap and self-expire server-side.
 
 A weekly cron (Mondays 06:00 UTC) re-runs the 3-pair scale
 experiment, uploads its output as a `scale-output-weekly`
@@ -279,4 +280,7 @@ A second cron (Mondays 06:30 UTC) prunes the per-run
 ([experiment/prune-artifacts.ts](experiment/prune-artifacts.ts)):
 anything older than 30 days is deleted, while the
 `scale-output-weekly` baselines the drift check compares
-against are kept.
+against are kept. This is the backstop layer — per-run
+uploads now self-expire after 7 days via `retention-days`,
+and the cron catches anything that predates the cap or
+slips past it.
