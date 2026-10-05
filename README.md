@@ -230,3 +230,20 @@ degenerate-pool safety); every `samples/` pair satisfies the fixture
 profile (AI sample hits the Table 6 template features, human sample the
 human-leaning profile, scores separate); and edge cases (empty input,
 unicode, huge single line).
+
+## How to contribute
+
+`main` is a protected branch: direct pushes, force-pushes, and
+deletions are rejected (for everyone, including admins). Changes
+land through pull requests:
+
+1. Branch off `main` (`git checkout -b <topic>`).
+2. Push the branch and open a PR.
+3. CI runs the full gates — typecheck, tests, demo, both
+   `detect` checks, and the 3-pair scale experiment — and must
+   pass before the PR can merge.
+4. Merge (squash; the history is conventional-commit style).
+
+CI can also be re-run on demand from the Actions tab
+(Actions → CI → Run workflow), with a `pair` input that runs
+the scale experiment on a single sample pair.
